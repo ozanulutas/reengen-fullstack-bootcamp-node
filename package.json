@@ -13,7 +13,8 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "fs-extra": "^10.0.0"
+    "fs-extra": "^10.0.0",
+    "http": "0.0.1-security"
   },
   "devDependencies": {
     "nodemon": "^2.0.14"
