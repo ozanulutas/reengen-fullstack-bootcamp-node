@@ -1,0 +1,14 @@
+{
+  "users": [
+    {
+      "name": "Patika",
+      "email": "ozan@patika.com",
+      "content": "Lorem ipsum ..."
+    },
+    {
+      "name": "Patika",
+      "email": "onur@patika.com",
+      "content": "Lorem ipsum dol bişey ..."
+    }
+  ]
+}
