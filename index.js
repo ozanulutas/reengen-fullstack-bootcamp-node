@@ -1,13 +1,33 @@
-const http = require("http")
-const mat = require("./math")
+const express = require("express")
+const dotenv = require("dotenv")
+const cors = require("cors")
+const mongoose = require("mongoose")
 
-// const cl = require("./global")
+const studentRouter = require("./routes/student.js")
 
-http.createServer(function (req, res) {
-  res.writeHead(200, { "Content-Type": "text/plain" })  // gönderilen response düzgün gitmezse deyu
-  
-  const calc = mat.Topla(3, 5)
-  // process.env.APP_ENV // .env erişmek için
+const app = express()
 
-  res.end("res: " + calc)
-}).listen(8080)
+app.use(cors())
+app.use(express.urlencoded({ extended: true }));
+app.use("/api", studentRouter) // api önekiyle gidiyor
+
+dotenv.config()
+
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}, err => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("connected to mongodb");
+  }
+})
+
+app.listen(8080, err => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("port 8080...");
+  }
+})
