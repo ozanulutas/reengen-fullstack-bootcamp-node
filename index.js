@@ -1,33 +1,22 @@
-const express = require("express")
-const dotenv = require("dotenv")
-const cors = require("cors")
-const mongoose = require("mongoose")
-
-const studentRouter = require("./routes/student.js")
+const express = require('express')
+const bodyParser = require('body-parser')
+const db = require('./db/index')
 
 const app = express()
 
-app.use(cors())
-app.use(express.urlencoded({ extended: true }));
-app.use("/api", studentRouter) // api önekiyle gidiyor
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
-dotenv.config()
-
-mongoose.connect(process.env.DATABASE, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}, err => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log("connected to mongodb");
-  }
+app.get('/', (req, res) => {
+  res.json({info: 'initial route'})
 })
 
-app.listen(8080, err => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log("port 8080...");
-  }
-})
+app.get('/students', db.students.getAll)
+app.get('/students/:name', db.students.getByName)
+app.post('/students', db.students.create)
+app.put('/students/:name', db.students.update)
+app.delete('/students', db.students.deleteByName)
+
+app.listen(8080, () => console.log('Listening 8080...'))
