@@ -10,7 +10,7 @@ const getAll = (request, response) => {
     }
   })
 
-  client.end()
+  // client.end()
 }
 
 const getByName = (request, response) => {
@@ -22,11 +22,12 @@ const getByName = (request, response) => {
     }
   })
 
-  client.end()
+  // client.end()
 }
 
 const deleteByName = (request, response) => {
   const { name } = require.body
+  // with callback
   client.query('DELETE FROM students WHERE name = $1', [name], (err, res) => {
     if (!err) {
       response.status(200).send("user is deleted")
@@ -35,7 +36,12 @@ const deleteByName = (request, response) => {
     }
   })
 
-  client.end()
+  // with promise
+  // client.query('DELETE FROM students WHERE name = $1', [name])
+  //   .then(response => response.status(200).send("user is deleted"))
+  //   .catch(err => console.log(err))
+
+  // client.end()
 }
 
 const create = (request, response) => {
@@ -48,7 +54,7 @@ const create = (request, response) => {
     }
   })
 
-  client.end()
+  // client.end()
 }
 
 const update = (request, response) => {
@@ -64,7 +70,31 @@ const update = (request, response) => {
       }
     })
 
-  client.end()
+  // client.end()
 }
 
-module.exports = { getAll, getByName, deleteByName, create, update }
+const updateOne = (request, response) => {
+
+  let keys = Object.keys(request.body)
+  let values = Object.values(request.body)
+  let str = ""
+
+  for (let i = 0; i < keys.length; i++) {
+    if (i == keys.length - 1) {
+      str += `${keys[i]}=$${i + 1}`
+    } else {
+      str += `${keys[i]}=$${i + 1}, `
+    }
+  }
+
+  client.query(`UPDATE students SET ${str} WHERE name=$1`, values, (err, res) => {
+    if (!err) {
+      response.status(201).send(`user updated`)
+    }
+    else {
+      console.log(err)
+    }
+  })
+}
+
+module.exports = { getAll, getByName, deleteByName, create, update, updateOne }
