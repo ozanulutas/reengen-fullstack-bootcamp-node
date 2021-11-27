@@ -1,30 +1,51 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const db = require('./db/index')
+const express = require("express")
+const cors = require("cors")
+const dotenv = require("dotenv")
+const mongoose = require("mongoose")
+const user = require("./router/user")
 
 const app = express()
-
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({
+app.use(cors())
+app.use(express.urlencoded({
   extended: true
-}));
+}))
+app.use("/user", user)
 
-app.get('/', (req, res) => {
-  res.json({info: 'initial route'})
+// middleware
+// altalata istenilan kadar callback yazılabilir
+app.use("/financial", 
+  (req, resp, next) => {
+    if(req.headers.get("x-access-token")) {
+      next()
+    } else {
+      resp.send("you are not authorized to access this route")
+    }
+  },
+  (req, resp, next) => {
+    if(req.headers.get("x-access-token")) {
+      next()
+    }
+  },
+  // financial // her şey yolundaysa financial'a gidecek
+)
+
+dotenv.config()
+
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}, err => {
+  if(err) {
+    console.log(err);
+  } else {
+    console.log("connected to mongodb...");
+  }
 })
 
-app.get('/students', db.students.getAll)
-app.get('/students/:name', db.students.getByName)
-app.post('/students', db.students.create)
-app.put('/students/:name', db.students.update)
-app.put('/students', db.students.updateOne)
-app.delete('/students', db.students.deleteByName)
-
-app.get('/classes', db.classes.getAll)
-app.get('/class', db.classes.getClasses)
-app.post('/classes', db.classes.create)
-app.put('/classes', db.classes.updateOne)
-app.put('/classes/:name', db.classes.update)
-app.delete('/classes', db.classes.deleteByName)
-
-app.listen(8080, () => console.log('Listening 8080...'))
+app.listen(process.env.PORT, err => {
+  if(err) {
+    console.log(err);
+  } else {
+    console.log(`Listening ${process.env.PORT}...`);
+  }
+})
