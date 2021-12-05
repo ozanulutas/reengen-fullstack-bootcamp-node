@@ -1,7 +1,10 @@
-// LODASH
-// require("./lodash/is-empty")
-// require("./lodash/get")
-// require("./lodash/at")
-// require("./lodash/pick-and-omit")
-// require("./lodash/intersectionBy")
+const mongoose = require("mongoose")
+const app = require("./server")
 
+mongoose.connect(process.env.DATABASE, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => {
+    app.listen(3000, () => console.log("Listening Port 3000..."))
+  })
